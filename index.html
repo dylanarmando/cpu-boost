@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CPU Boost</title>
+<meta property="og:title" content="CPU Boost">
+<meta property="og:description" content="Optimizador de CPU y GPU para Linux. Intel, AMD Ryzen y NVIDIA. Beta gratuita.">
+<meta property="og:type" content="website">
+<meta name="description" content="CPU Boost: optimizador de CPU y GPU para Linux. Funciona con Intel, AMD Ryzen y NVIDIA. Incluye Game Boost. Beta gratuita.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column of bands; hero splits copy / live app mock; feature cards on a 3-col grid; install as a real 3-step sequence. */
+:root{
+  --bg:#f6f2ff; --panel:#ffffff; --panel2:#ece6fb; --line:#d3c6f2; --fg:#1a1030; --muted:#5d4f86;
+  --cyan:#6d28d9; --violet:#7c3aed; --orange:#b45309; --green:#0a8a63; --pink:#c026d3; --on-cyan:#ffffff;
+  --glow:rgba(124,58,237,.18);
+  --display:"Chakra Petch",system-ui,sans-serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e0a1f; --panel:#181230; --panel2:#221a40; --line:#3a2d6b; --fg:#f3effe; --muted:#a99ccf;
+  --cyan:#b18cff; --violet:#8f5bff; --orange:#ffb347; --green:#3be3a8; --pink:#f06be8; --on-cyan:#140a2e; --glow:rgba(143,91,255,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e0a1f; --panel:#181230; --panel2:#221a40; --line:#3a2d6b; --fg:#f3effe; --muted:#a99ccf;
+  --cyan:#b18cff; --violet:#8f5bff; --orange:#ffb347; --green:#3be3a8; --pink:#f06be8; --on-cyan:#140a2e; --glow:rgba(143,91,255,.35); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0}
+img{max-width:100%}
+body{background:radial-gradient(900px 500px at 85% -5%,var(--glow),transparent 70%),radial-gradient(700px 400px at -10% 30%,var(--glow),transparent 70%),var(--bg);background-attachment:fixed;color:var(--fg);font:16px/1.6 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1080px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);line-height:1.1;margin:0;text-wrap:balance}
+h2{font-size:clamp(26px,4vw,36px);margin-bottom:10px}
+p{margin:0}
+a{color:var(--cyan)}
+code,.mono{font-family:var(--mono)}
+nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:20px}
+.brand{display:flex;align-items:center;gap:10px;font:700 20px var(--display)}
+.brand svg{width:30px;height:30px}
+.lang{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px}
+.lang button{font:600 13px var(--body);border:0;background:none;color:var(--muted);padding:6px 12px;border-radius:7px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--cyan);color:var(--on-cyan)}
+.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center;padding-block:40px 64px}
+.eyebrow{font:500 13px var(--mono);color:var(--cyan);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+.hero h1{font-size:clamp(40px,7vw,68px);margin-bottom:16px}
+.hero p.lead{color:var(--muted);font-size:18px;max-width:46ch;margin-bottom:26px}
+.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:8px;font:600 16px var(--body);text-decoration:none;padding:13px 22px;border-radius:12px;border:2px solid var(--cyan);cursor:pointer}
+.btn.primary{background:var(--cyan);color:var(--on-cyan)}
+.btn.ghost{background:transparent;color:var(--cyan)}
+.btn:focus-visible,.lang button:focus-visible,summary:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+.note{font-size:13px;color:var(--muted);margin-top:12px}
+.mock{border:2px solid var(--pink);border-radius:18px;background:var(--panel);padding:16px;box-shadow:0 0 0 6px color-mix(in srgb,var(--violet) 14%,transparent)}
+.mock .bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font:700 15px var(--display)}
+.chip{font:600 11px var(--body);padding:3px 9px;border-radius:99px;border:1px solid currentColor}
+.mock .boost{border:2px solid var(--orange);border-radius:12px;padding:12px;margin-bottom:12px}
+.mock .boost b{font:700 18px var(--display);color:var(--orange)}
+.mock .boost small{display:block;color:var(--muted);font-size:12px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;border-radius:9px;background:var(--panel2);border-left:4px solid var(--c);margin-top:6px;font-size:14px;font-weight:500}
+.row i{font-style:normal;font-size:11px;color:var(--c);font-weight:600}
+.row.on{outline:1px solid var(--green)}
+.meter{height:8px;border-radius:9px;background:var(--panel2);margin:6px 0 10px;overflow:hidden}
+.meter span{display:block;height:100%;background:var(--green)}
+section{padding-block:56px;border-top:1px solid var(--line)}
+.sub{color:var(--muted);max-width:60ch;margin-bottom:28px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--panel);border:2px solid var(--c);border-radius:16px;padding:20px;min-width:0;box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 14%,transparent),0 10px 30px -12px var(--c)}
+.card h3{font-size:19px;color:var(--c);margin-bottom:6px}
+.card p{color:var(--muted);font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.chips span{font:600 13px var(--mono);border:1.5px solid var(--c);color:var(--c);border-radius:99px;padding:5px 12px}
+.compat{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.compat .card ul{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.compat li{display:flex;justify-content:space-between;gap:12px;align-items:baseline;border-top:1px solid var(--line);padding-top:8px;color:var(--fg);font-size:15px}
+.compat li small{color:var(--muted);font-size:13px;text-align:right}
+@media (max-width:820px){.compat{grid-template-columns:1fr}}
+.distros{display:flex;flex-wrap:wrap;gap:10px}
+.distros span{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;font:500 14px var(--mono)}
+.steps{display:grid;gap:16px;counter-reset:s}
+.step{display:grid;grid-template-columns:44px 1fr;gap:16px;background:var(--panel);border:2px solid var(--violet);box-shadow:0 0 0 4px color-mix(in srgb,var(--violet) 14%,transparent);border-radius:16px;padding:20px;min-width:0}
+.step::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:44px;height:44px;border-radius:50%;border:2px solid var(--cyan);color:var(--cyan);font:700 18px var(--display)}
+.step h3{font-size:19px;margin-bottom:4px}
+.step p{color:var(--muted);font-size:15px;margin-bottom:10px}
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.pick button{font:500 14px var(--mono);background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:8px 14px;cursor:pointer}
+.pick button[aria-pressed="true"]{border:2px solid var(--cyan);color:var(--cyan);padding:7px 13px}
+.pick button:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+.detected{font-size:14px;color:var(--green);margin:0 0 18px;min-height:1.4em}
+.cmd{display:flex;gap:8px;align-items:stretch;min-width:0}
+.step>div{min-width:0}
+.cmd pre{flex:1;min-width:0;margin:0;white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:auto;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font:400 13px/1.55 var(--mono);color:var(--fg)}
+.cmd button{font:600 13px var(--body);border:1px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:10px;padding:0 14px;cursor:pointer}
+.warn{border:2px solid var(--orange);border-radius:16px;background:var(--panel);padding:22px}
+.warn h2{color:var(--orange);font-size:24px}
+.warn p{color:var(--muted)}
+details{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-top:10px}
+summary{cursor:pointer;font-weight:600}
+details p{color:var(--muted);margin-top:8px;font-size:15px}
+footer{border-top:1px solid var(--line);padding-block:28px 40px;color:var(--muted);font-size:14px}
+
+.splash{position:fixed;inset:0;z-index:50;display:grid;place-items:center;text-align:center;padding:24px max(16px,env(safe-area-inset-left,0px));background:radial-gradient(600px 400px at 50% 40%,var(--glow),transparent 70%),var(--bg);animation:splashOut .7s ease 2.8s forwards;cursor:pointer}
+.splash svg{width:84px;height:84px;margin-bottom:18px;filter:drop-shadow(0 0 18px var(--violet))}
+.splash h2{font-size:clamp(30px,6vw,54px);margin:0 0 10px;color:var(--fg)}
+.splash p{color:var(--muted);font-size:clamp(16px,2.4vw,20px);max-width:34ch;margin:0 auto}
+.splash .bar{width:min(240px,60vw);height:4px;border-radius:9px;background:var(--panel2);margin:26px auto 0;overflow:hidden}
+.splash .bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--violet),var(--pink));transform-origin:left;animation:fill 2.8s linear forwards}
+@keyframes splashOut{to{opacity:0;visibility:hidden}}
+@keyframes fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media (prefers-reduced-motion:reduce){.splash{animation-delay:1.2s}.splash .bar i{animation-duration:1.2s}}
+.beta{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;border:2px solid var(--pink);border-radius:14px;background:var(--panel);padding:12px 16px;box-shadow:0 0 0 4px color-mix(in srgb,var(--pink) 14%,transparent);margin-bottom:8px}
+.beta b{font:700 12px var(--mono);letter-spacing:.1em;background:var(--pink);color:#fff;border-radius:99px;padding:4px 10px}
+.beta span{flex:1;min-width:220px;font-size:15px}
+.beta a{font-weight:600}
+.tt{display:inline-flex;align-items:center;gap:8px;font:600 16px var(--body);text-decoration:none;color:var(--on-cyan);background:linear-gradient(90deg,var(--violet),var(--pink));border-radius:12px;padding:12px 20px}
+.tt:focus-visible{outline:3px solid var(--fg);outline-offset:2px}
+@media (max-width:820px){.hero{grid-template-columns:1fr;gap:28px}.grid{grid-template-columns:1fr}.step{grid-template-columns:1fr}.cmd{flex-direction:column}.cmd button{padding:10px}}
+@media (prefers-reduced-motion:no-preference){.btn{transition:transform .15s}.btn:hover{transform:translateY(-2px)}}
+</style>
+
+</head>
+<body>
+<div class="splash" id="splash" role="status" aria-live="polite" title="">
+  <div>
+    <svg viewBox="0 0 96 96" fill="none" stroke="var(--cyan)" stroke-width="5" aria-hidden="true"><rect x="26" y="26" width="44" height="44"/><rect x="40" y="40" width="16" height="16" fill="var(--pink)" stroke="none"/><path d="M34 12v14M48 12v14M62 12v14M34 70v14M48 70v14M62 70v14M12 34h14M12 48h14M12 62h14M70 34h14M70 48h14M70 62h14"/></svg>
+    <h2 data-es="Bienvenido a CPU Boost" data-en="Welcome to CPU Boost">Bienvenido a CPU Boost</h2>
+    <p data-es="Listo para aprovechar el potencial de tu computadora" data-en="Ready to unlock the full potential of your computer">Listo para aprovechar el potencial de tu computadora</p>
+    <div class="bar"><i></i></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav>
+    <div class="brand">
+      <svg viewBox="0 0 96 96" fill="none" stroke="var(--cyan)" stroke-width="5" aria-hidden="true"><rect x="26" y="26" width="44" height="44"/><rect x="40" y="40" width="16" height="16" fill="var(--cyan)" stroke="none"/><path d="M34 12v14M48 12v14M62 12v14M34 70v14M48 70v14M62 70v14M12 34h14M12 48h14M12 62h14M70 34h14M70 48h14M70 62h14"/></svg>
+      CPU Boost
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button id="b-es" aria-pressed="true">ES</button><button id="b-en" aria-pressed="false">EN</button>
+    </div>
+  </nav>
+
+  <div class="beta" role="note">
+    <b>BETA</b>
+    <span data-es="CPU Boost está en fase beta. Puede tener errores. Si encuentras alguno, déjanos tu comentario en nuestro TikTok." data-en="CPU Boost is in beta. It may have bugs. If you find one, leave us a comment on our TikTok.">CPU Boost está en fase beta. Puede tener errores. Si encuentras alguno, déjanos tu comentario en nuestro TikTok.</span>
+    <a href="https://www.tiktok.com/@CPU_Boost" target="_blank" rel="noopener">@CPU_Boost</a>
+  </div>
+
+  <header class="hero">
+    <div>
+      <div class="eyebrow" data-es="Linux · CPU y GPU · v2.0 beta" data-en="Linux · CPU & GPU · v2.0 beta">Linux · CPU y GPU · v2.0 beta</div>
+      <h1 data-es="Más rendimiento de tu PC, sin complicarte." data-en="More speed from your PC, no fuss.">Más rendimiento de tu PC, sin complicarte.</h1>
+      <p class="lead" data-es="Perfiles de energía para CPU y GPU, boost de potencia con corte por temperatura y Game Boost que detecta tus juegos. Todo se deshace con un clic." data-en="Energy profiles for CPU and GPU, a power boost with a temperature cut-off, and Game Boost that finds your games. Everything undoes with one click.">Perfiles de energía para CPU y GPU, boost de potencia con corte por temperatura y Game Boost que detecta tus juegos. Todo se deshace con un clic.</p>
+      <div class="cta">
+        <a class="btn primary" href="cpu_optimizer.py" download="cpu_optimizer.py"><span data-es="Descargar cpu-boost" data-en="Download cpu-boost">Descargar CPU Boost</span></a>
+        <a class="btn ghost" href="#instalar" data-es="Cómo instalarlo" data-en="How to install">Cómo instalarlo</a>
+      </div>
+      <div class="chips" aria-label="Compatibilidad">
+        <span style="--c:var(--cyan)">Intel Core</span><span style="--c:var(--pink)">AMD Ryzen</span>
+        <span style="--c:var(--cyan)">GPU Intel</span><span style="--c:var(--pink)">GPU AMD</span><span style="--c:var(--green)">GPU NVIDIA</span>
+      </div>
+      <p class="note" data-es="Se descarga como cpu_optimizer.py. Luego sigue los pasos de instalación." data-en="Downloads as cpu_optimizer.py. Then follow the install steps.">Se descarga como cpu_optimizer.py. Luego sigue los pasos de instalación.</p>
+    </div>
+    <div class="mock" aria-hidden="true">
+      <div class="bar"><span>CPU Boost</span><span class="chip" style="color:var(--green)">Game Boost ON</span></div>
+      <div class="boost"><b>Game Boost</b><small>Portal 2 · Steam</small></div>
+      <small style="color:var(--muted)">CPU</small>
+      <div class="meter"><span style="width:72%"></span></div>
+      <div class="row on" style="--c:var(--cyan)">Portal 2 <i>Steam</i></div>
+      <div class="row" style="--c:var(--orange)">Hades <i>Lutris</i></div>
+      <div class="row" style="--c:var(--violet)">Celeste <i>Heroic</i></div>
+    </div>
+  </header>
+
+  <section>
+    <h2 data-es="Qué hace" data-en="What it does">Qué hace</h2>
+    <p class="sub" data-es="Seis funciones, una sola ventana." data-en="Six features, one window.">Seis funciones, una sola ventana.</p>
+    <div class="grid">
+      <div class="card" style="--c:var(--violet)"><h3 data-es="Perfiles de energía" data-en="Energy profiles">Perfiles de energía</h3><p data-es="Ahorro, Balanceado y Rendimiento para procesadores Intel y AMD Ryzen, y para GPU Intel, AMD y NVIDIA." data-en="Saving, Balanced and Performance for Intel and AMD Ryzen processors, and for Intel, AMD and NVIDIA GPUs.">Ahorro, Balanceado y Rendimiento para procesadores Intel y AMD Ryzen, y para GPU Intel, AMD y NVIDIA.</p></div>
+      <div class="card" style="--c:var(--violet)"><h3 data-es="Modo automático" data-en="Auto mode">Modo automático</h3><p data-es="Cambia de perfil según la carga, la temperatura y si estás conectado a la corriente." data-en="Switches profile based on load, temperature and whether you are plugged in.">Cambia de perfil según la carga, la temperatura y si estás conectado a la corriente.</p></div>
+      <div class="card" style="--c:var(--orange)"><h3>Game Boost</h3><p data-es="Detecta tus juegos de Steam, Lutris y Heroic. Al abrir uno, sube el rendimiento; al cerrarlo, vuelve todo a la normalidad." data-en="Finds your Steam, Lutris and Heroic games. When one opens it raises performance; when it closes, everything goes back to normal.">Detecta tus juegos de Steam, Lutris y Heroic. Al abrir uno, sube el rendimiento; al cerrarlo, vuelve todo a la normalidad.</p></div>
+      <div class="card" style="--c:var(--pink)"><h3 data-es="Boost de potencia" data-en="Power boost">Boost de potencia</h3><p data-es="Sube los límites de potencia (RAPL en Intel; en Ryzen requiere instalar ryzenadj) y los revierte si la temperatura llega al tope que elijas." data-en="Raises power limits (RAPL on Intel; on Ryzen it needs ryzenadj installed) and reverts them if temperature reaches the cap you choose.">Sube los límites de potencia (RAPL en Intel; en Ryzen requiere instalar ryzenadj) y los revierte si la temperatura llega al tope que elijas.</p></div>
+      <div class="card" style="--c:var(--violet)"><h3 data-es="Restaurar todo" data-en="Restore everything">Restaurar todo</h3><p data-es="Guarda tus valores originales y los devuelve cuando quieras." data-en="Saves your original values and puts them back whenever you want.">Guarda tus valores originales y los devuelve cuando quieras.</p></div>
+      <div class="card" style="--c:var(--cyan)"><h3 data-es="10 idiomas" data-en="10 languages">10 idiomas</h3><p data-es="English, Español, Português, Français, Deutsch, Italiano, Русский, Türkçe, 中文 y 日本語." data-en="English, Español, Português, Français, Deutsch, Italiano, Русский, Türkçe, 中文 and 日本語.">English, Español, Português, Français, Deutsch, Italiano, Русский, Türkçe, 中文 y 日本語.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-es="Compatibilidad" data-en="Compatibility">Compatibilidad</h2>
+    <p class="sub" data-es="Funciona con procesadores y tarjetas gráficas de los tres fabricantes. La app escanea tu equipo (por ejemplo un Ryzen 5 con una RTX 4070) y te muestra exactamente qué ajustará en cada pieza." data-en="Works with processors and graphics cards from all three makers. The app scans your machine (for example a Ryzen 5 with an RTX 4070) and shows exactly what it will tune on each part.">Funciona con procesadores y tarjetas gráficas de los tres fabricantes. La app escanea tu equipo (por ejemplo un Ryzen 5 con una RTX 4070) y te muestra exactamente qué ajustará en cada pieza.</p>
+    <div class="compat">
+      <div class="card" style="--c:var(--cyan)"><h3 data-es="Procesadores" data-en="Processors">Procesadores</h3><ul>
+        <li><span>Intel Core</span><small data-es="Perfiles, turbo y boost de potencia (RAPL)" data-en="Profiles, turbo and power boost (RAPL)">Perfiles, turbo y boost de potencia (RAPL)</small></li>
+        <li><span>AMD Ryzen</span><small data-es="Perfiles y turbo. Boost de potencia con ryzenadj" data-en="Profiles and turbo. Power boost with ryzenadj">Perfiles y turbo. Boost de potencia con ryzenadj</small></li>
+      </ul></div>
+      <div class="card" style="--c:var(--pink)"><h3 data-es="Tarjetas gráficas" data-en="Graphics cards">Tarjetas gráficas</h3><ul>
+        <li><span>Intel</span><small data-es="Frecuencia mínima y máxima" data-en="Minimum and maximum frequency">Frecuencia mínima y máxima</small></li>
+        <li><span>AMD Radeon</span><small data-es="Nivel de rendimiento y límite de potencia" data-en="Performance level and power limit">Nivel de rendimiento y límite de potencia</small></li>
+        <li><span>NVIDIA</span><small data-es="Límite de potencia (nvidia-smi)" data-en="Power limit (nvidia-smi)">Límite de potencia (nvidia-smi)</small></li>
+      </ul></div>
+    </div>
+    <p class="note" data-es="Algunos equipos bloquean estos ajustes desde el firmware o el driver. En ese caso la app lo avisa y no cambia nada." data-en="Some machines lock these settings in firmware or the driver. The app tells you and changes nothing.">Algunos equipos bloquean estos ajustes desde el firmware o el driver. En ese caso la app lo avisa y no cambia nada.</p>
+  </section>
+
+  <section>
+    <h2 data-es="Distribuciones" data-en="Distributions">Distribuciones</h2>
+    <p class="sub" data-es="Consejos y comandos propios para cada una. Si la tuya no está, elige &quot;Otra&quot;." data-en="Tips and commands for each one. If yours is missing, pick &quot;Other&quot;.">Consejos y comandos propios para cada una. Si la tuya no está, elige "Otra".</p>
+    <div class="distros"><span>Arch Linux</span><span>CachyOS</span><span>Manjaro</span><span>EndeavourOS</span><span>Debian</span><span>Ubuntu</span><span>Linux Mint</span><span>Pop!_OS</span><span>Fedora</span><span>openSUSE</span></div>
+  </section>
+
+  <section id="instalar">
+    <h2 data-es="Instalación" data-en="Install">Instalación</h2>
+    <p class="sub" data-es="Tres pasos en la terminal. Requiere Python 3, Tk y polkit." data-en="Three steps in the terminal. Requires Python 3, Tk and polkit.">Tres pasos en la terminal. Requiere Python 3, Tk y polkit.</p>
+    <h3 style="font-size:18px;margin-bottom:10px" data-es="Tu distribución" data-en="Your distribution">Tu distribución</h3>
+    <div class="pick" id="pick" role="group" aria-label="Distribution"></div>
+    <p class="detected" id="detected" aria-live="polite"></p>
+    <div class="steps">
+      <div class="step"><div>
+        <h3 data-es="Instala las dependencias" data-en="Install dependencies">Instala las dependencias</h3>
+        <p id="dep-note" data-es="Con «Detectar automáticamente», el comando mira tu sistema y elige el gestor de paquetes correcto." data-en="With “Auto-detect”, the command looks at your system and picks the right package manager.">Con «Detectar automáticamente», el comando mira tu sistema y elige el gestor de paquetes correcto.</p>
+        <div class="cmd"><pre id="dep-cmd"></pre><button data-copy>Copiar</button></div>
+      </div></div>
+      <div class="step"><div>
+        <h3 data-es="Copia el programa" data-en="Copy the program">Copia el programa</h3>
+        <p data-es="Con el archivo ya descargado en tu carpeta de Descargas." data-en="With the file already downloaded to your Downloads folder.">Con el archivo ya descargado en tu carpeta de Descargas.</p>
+        <div class="cmd"><pre>mkdir -p ~/.local/bin ~/.local/share/applications
+cp ~/Descargas/cpu_optimizer.py ~/.local/bin/cpu-optimizer
+chmod +x ~/.local/bin/cpu-optimizer</pre><button data-copy>Copiar</button></div>
+      </div></div>
+      <div class="step"><div>
+        <h3 data-es="Ábrelo" data-en="Open it">Ábrelo</h3>
+        <p data-es="Desde la terminal. La primera vez verás la bienvenida, el idioma, tu distribución y los términos." data-en="From the terminal. The first time you will see the welcome, language, your distribution and the terms.">Desde la terminal. La primera vez verás la bienvenida, el idioma, tu distribución y los términos.</p>
+        <div class="cmd"><pre>python3 ~/.local/bin/cpu-optimizer</pre><button data-copy>Copiar</button></div>
+      </div></div>
+    </div>
+    <p class="note" data-es="Usuarios de fish: estos comandos funcionan tal cual. Para tener acceso en el menú de aplicaciones, crea un archivo .desktop en ~/.local/share/applications." data-en="fish users: these commands work as they are. For a menu entry, create a .desktop file in ~/.local/share/applications.">Usuarios de fish: estos comandos funcionan tal cual. Para tener acceso en el menú de aplicaciones, crea un archivo .desktop en ~/.local/share/applications.</p>
+  </section>
+
+  <section>
+    <div class="warn">
+      <h2 data-es="Úsalo bajo tu responsabilidad" data-en="Use at your own risk">Úsalo bajo tu responsabilidad</h2>
+      <p data-es="CPU Boost cambia ajustes de bajo nivel de la CPU, la GPU y la energía. Subir los límites de potencia aumenta el calor y el ruido del ventilador. Si le pasa algo a tu computadora, no nos hacemos responsables. Puedes deshacer todo con «Restaurar valores originales»." data-en="CPU Boost changes low-level CPU, GPU and power settings. Raising power limits increases heat and fan noise. If anything happens to your computer, we are not responsible. You can undo everything with “Restore original values”.">CPU Boost cambia ajustes de bajo nivel de la CPU, la GPU y la energía. Subir los límites de potencia aumenta el calor y el ruido del ventilador. Si le pasa algo a tu computadora, no nos hacemos responsables. Puedes deshacer todo con «Restaurar valores originales».</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="warn" style="border-color:var(--pink);box-shadow:0 0 0 4px color-mix(in srgb,var(--pink) 14%,transparent)">
+      <h2 style="color:var(--pink)" data-es="¿Encontraste un error?" data-en="Found a bug?">¿Encontraste un error?</h2>
+      <p style="margin-bottom:16px" data-es="La app está en fase beta y tu comentario ayuda a mejorarla. Cuéntanos qué pasó y qué distribución, procesador y tarjeta gráfica usas. En la app, Funciones y soporte tiene un botón que copia ese reporte por ti." data-en="The app is in beta and your comment helps improve it. Tell us what happened and which distribution, processor and graphics card you use. In the app, Features &amp; support has a button that copies that report for you.">La app está en fase beta y tu comentario ayuda a mejorarla. Cuéntanos qué pasó y qué distribución, procesador y tarjeta gráfica usas. En la app, Funciones y soporte tiene un botón que copia ese reporte por ti.</p>
+      <a class="tt" href="https://www.tiktok.com/@CPU_Boost" target="_blank" rel="noopener"><span data-es="Comentar en TikTok @CPU_Boost" data-en="Comment on TikTok @CPU_Boost">Comentar en TikTok @CPU_Boost</span></a>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-es="Preguntas frecuentes" data-en="FAQ">Preguntas frecuentes</h2>
+    <details><summary data-es="¿Pide contraseña?" data-en="Does it ask for a password?">¿Pide contraseña?</summary><p data-es="Sí, al aplicar cambios. Usa polkit (pkexec), la ventana estándar de tu escritorio." data-en="Yes, when applying changes. It uses polkit (pkexec), your desktop's standard prompt.">Sí, al aplicar cambios. Usa polkit (pkexec), la ventana estándar de tu escritorio.</p></details>
+    <details><summary data-es="¿Funciona en cualquier laptop?" data-en="Does it work on any laptop?">¿Funciona en cualquier laptop?</summary><p data-es="Depende del hardware. Algunos equipos bloquean los límites de potencia desde el firmware; en ese caso la app lo avisa y no cambia nada." data-en="It depends on the hardware. Some machines lock power limits in firmware; the app tells you and changes nothing.">Depende del hardware. Algunos equipos bloquean los límites de potencia desde el firmware; en ese caso la app lo avisa y no cambia nada.</p></details>
+    <details><summary data-es="¿Cómo lo desinstalo?" data-en="How do I uninstall it?">¿Cómo lo desinstalo?</summary><p data-es="Pulsa «Restaurar valores originales» y borra ~/.local/bin/cpu-optimizer." data-en="Press “Restore original values” and delete ~/.local/bin/cpu-optimizer.">Pulsa «Restaurar valores originales» y borra ~/.local/bin/cpu-optimizer.</p></details>
+  </section>
+
+  <footer>CPU Boost v2.0 beta · <span data-es="Software ofrecido «tal cual», sin garantía." data-en="Software provided “as is”, without warranty.">Software ofrecido «tal cual», sin garantía.</span></footer>
+</div>
+
+<script>
+(function(){
+  var cur="es";
+  var sp=document.getElementById("splash");sp.onclick=function(){sp.hidden=true};
+  setTimeout(function(){sp.hidden=true},3700);
+  function set(l){
+    cur=l;
+    document.documentElement.lang=l;
+    document.querySelectorAll("[data-"+l+"]").forEach(function(e){e.innerHTML=e.getAttribute("data-"+l)});
+    document.getElementById("b-es").setAttribute("aria-pressed",l==="es");
+    document.getElementById("b-en").setAttribute("aria-pressed",l==="en");
+    document.querySelectorAll("[data-copy]").forEach(function(b){b.textContent=l==="es"?"Copiar":"Copy"});
+    try{localStorage.setItem("cpuboost-lang",l)}catch(e){}
+  }
+
+  var AUTO="sh -c '. /etc/os-release; case \"$ID $ID_LIKE\" in *arch*) sudo pacman -S --needed tk polkit;; *debian*|*ubuntu*) sudo apt install -y python3-tk policykit-1;; *fedora*|*rhel*) sudo dnf install -y python3-tkinter polkit;; *suse*) sudo zypper install -y python3-tk polkit;; *) echo \"Instala Tk y polkit con tu gestor de paquetes\";; esac'";
+  var D=[["auto",null,null],["arch","Arch Linux","sudo pacman -S --needed tk polkit"],["cachyos","CachyOS","sudo pacman -S --needed tk polkit"],["manjaro","Manjaro","sudo pacman -S --needed tk polkit"],["endeavouros","EndeavourOS","sudo pacman -S --needed tk polkit"],["debian","Debian","sudo apt install python3-tk policykit-1"],["ubuntu","Ubuntu","sudo apt install python3-tk policykit-1"],["mint","Linux Mint","sudo apt install python3-tk policykit-1"],["pop","Pop!_OS","sudo apt install python3-tk policykit-1"],["fedora","Fedora","sudo dnf install python3-tkinter polkit"],["opensuse","openSUSE","sudo zypper install python3-tk polkit"]];
+  var sel="auto", box=document.getElementById("pick");
+  function guess(){
+    var ua=(navigator.userAgent||"").toLowerCase();
+    if(ua.indexOf("linux")<0||ua.indexOf("android")>=0){return {os:/android/.test(ua)?"Android":(/windows/.test(ua)?"Windows":(/mac/.test(ua)?"macOS":"?")),d:null}}
+    var map=[["ubuntu","ubuntu"],["fedora","fedora"],["debian","debian"],["linux mint","mint"],["manjaro","manjaro"],["arch","arch"],["suse","opensuse"]];
+    for(var i=0;i<map.length;i++){if(ua.indexOf(map[i][0])>=0)return {os:"Linux",d:map[i][1]}}
+    return {os:"Linux",d:null};
+  }
+  function render(){
+    box.innerHTML="";
+    D.forEach(function(d){
+      var b=document.createElement("button");
+      b.type="button";
+      b.textContent=d[0]==="auto"?(cur==="es"?"Detectar automáticamente":"Auto-detect"):d[1];
+      b.setAttribute("aria-pressed",d[0]===sel);
+      b.onclick=function(){sel=d[0];try{localStorage.setItem("cpuboost-distro",sel)}catch(e){};render()};
+      box.appendChild(b);
+    });
+    var cmd=AUTO;
+    D.forEach(function(d){if(d[0]===sel&&d[2])cmd=d[2]});
+    document.getElementById("dep-cmd").textContent=cmd;
+    var g=guess(), el=document.getElementById("detected"), name="";
+    D.forEach(function(d){if(d[0]===g.d)name=d[1]});
+    if(g.os==="Linux"&&name) el.textContent=(cur==="es"?"Tu navegador indica "+name+". Puedes cambiarlo arriba.":"Your browser reports "+name+". You can change it above.");
+    else if(g.os==="Linux") el.textContent=(cur==="es"?"Eres de Linux, pero el navegador no dice qué distribución. Deja «Detectar automáticamente»: lo hace el comando.":"You are on Linux, but the browser does not say which distribution. Keep “Auto-detect”: the command does it.");
+    else if(g.os!=="?") el.textContent=(cur==="es"?"Estás en "+g.os+". CPU Boost solo funciona en Linux.":"You are on "+g.os+". CPU Boost only works on Linux.");
+    else el.textContent="";
+  }
+  var _set=set; set=function(l){_set(l);render()};
+  document.getElementById("b-es").onclick=function(){set("es")};
+  document.getElementById("b-en").onclick=function(){set("en")};
+  document.querySelectorAll("[data-copy]").forEach(function(b){
+    b.onclick=function(){
+      var pre=b.previousElementSibling, txt=pre.textContent;
+      var done=function(){b.textContent=cur==="es"?"¡Copiado!":"Copied!";setTimeout(function(){b.textContent=cur==="es"?"Copiar":"Copy"},1500)};
+      if(navigator.clipboard){navigator.clipboard.writeText(txt).then(done,function(){sel(pre)})}else{sel(pre)}
+    };
+  });
+  function sel(n){var r=document.createRange();r.selectNodeContents(n);var s=getSelection();s.removeAllRanges();s.addRange(r)}
+  var saved=null;try{saved=localStorage.getItem("cpuboost-lang")}catch(e){}
+  var sd=null;try{sd=localStorage.getItem("cpuboost-distro")}catch(e){}
+  var g0=guess();
+  sel=sd||g0.d||"auto";
+  if(saved==="en")set("en");else render();
+})();
+</script>
+
+</body>
+</html>
